@@ -216,6 +216,13 @@ select {
   word-break: break-word;
 }
 
+.error-message {
+  margin: 0;
+  color: #b42318;
+  word-break: break-word;
+  font-size: 14px;
+}
+
 .list-panel {
   overflow-x: auto;
 }

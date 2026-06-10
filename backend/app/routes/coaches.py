@@ -17,6 +17,9 @@ def list_coaches(active: bool | None = None) -> list[Coach]:
 
 @router.post("", response_model=CoachRead, status_code=201)
 def create_coach(payload: CoachCreate) -> Coach:
+    for existing_coach in coaches.values():
+        if existing_coach.car_no == payload.car_no:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, "该车牌已被其他教练使用")
     coach = Coach(id=next_id("coach"), **payload.model_dump())
     coaches[coach.id] = coach
     return coach

@@ -14,6 +14,7 @@
         <label>电话<input v-model="form.phone" required /></label>
         <label>车牌<input v-model="form.car_no" required /></label>
         <label>擅长项目<input v-model="specialtiesText" placeholder="科目二, 科目三" /></label>
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         <button class="primary" type="submit">
           <UserPlus :size="18" />
           保存教练
@@ -66,6 +67,7 @@ defineProps({
 
 const emit = defineEmits(['changed'])
 const specialtiesText = ref('')
+const errorMessage = ref('')
 const form = reactive({
   name: '',
   phone: '',
@@ -73,16 +75,21 @@ const form = reactive({
 })
 
 async function submit() {
-  await coachApi.create({
-    ...form,
-    specialties: specialtiesText.value.split(',').map((item) => item.trim()).filter(Boolean),
-    active: true,
-  })
-  form.name = ''
-  form.phone = ''
-  form.car_no = ''
-  specialtiesText.value = ''
-  emit('changed')
+  errorMessage.value = ''
+  try {
+    await coachApi.create({
+      ...form,
+      specialties: specialtiesText.value.split(',').map((item) => item.trim()).filter(Boolean),
+      active: true,
+    })
+    form.name = ''
+    form.phone = ''
+    form.car_no = ''
+    specialtiesText.value = ''
+    emit('changed')
+  } catch (error) {
+    errorMessage.value = error.message
+  }
 }
 
 async function toggle(coach) {
